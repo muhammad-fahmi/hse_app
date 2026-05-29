@@ -18,6 +18,18 @@ export async function createReport(data: { location_id: string; description: str
   revalidatePath("/admin");
 }
 
+export async function getLatestReportId() {
+  try {
+    const [report] = await db
+      .select({ id: reports.id })
+      .from(reports)
+      .orderBy(desc(reports.created_at));
+    return report?.id;
+  } catch (error) {
+    return null;
+  }
+}
+
 export async function getReports() {
   try {
     const allReports = await db
