@@ -134,14 +134,16 @@ export default function LocationManager({ initialLocations }: { initialLocations
                           <Copy className="h-4 w-4" />
                         </Button>
                         <Dialog>
-                          <DialogTrigger asChild>
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className="rounded-full gap-2 text-xs font-semibold hover:bg-primary hover:text-primary-foreground transition-all"
-                            >
-                              <QrCode className="h-3.5 w-3.5" /> View QR
-                            </Button>
+                          <DialogTrigger 
+                            render={
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="rounded-full gap-2 text-xs font-semibold hover:bg-primary hover:text-primary-foreground transition-all"
+                              />
+                            }
+                          >
+                            <QrCode className="h-3.5 w-3.5" /> View QR
                           </DialogTrigger>
                           <DialogContent className="sm:max-w-md flex flex-col items-center justify-center p-8 glass border-none shadow-2xl overflow-hidden">
                             <div className="absolute top-0 left-0 w-full h-2 bg-primary" />
