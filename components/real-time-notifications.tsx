@@ -10,10 +10,18 @@ export default function RealTimeNotifications({ latestReportId }: { latestReport
   const prevReportId = useRef(latestReportId);
 
   useEffect(() => {
-    // Poll Server Action directly to bypass all Next.js caching complexities
+    // Gunakan Fetch API standar untuk 100% mem-bypass Cache agresif Next.js
     const interval = setInterval(async () => {
       try {
-        const currentLatestId = await getLatestReportId();
+        const res = await fetch("/api/latest-report", {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+            "Pragma": "no-cache"
+          }
+        });
+        const data = await res.json();
+        const currentLatestId = data.id;
         
         if (currentLatestId && prevReportId.current && currentLatestId !== prevReportId.current) {
           // Play audio BEFORE toast to ensure it runs
