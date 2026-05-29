@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import RealTimeNotifications from "@/components/real-time-notifications";
 import AdminShell from "@/components/admin-shell";
 import { AlertCircle, CheckCircle2, Clock, ListFilter, Plus, TrendingUp } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
