@@ -19,19 +19,24 @@ export async function createReport(data: { location_id: string; description: str
 }
 
 export async function getReports() {
-  const allReports = await db
-    .select({
-      id: reports.id,
-      description: reports.description,
-      status: reports.status,
-      created_at: reports.created_at,
-      location_name: locations.name,
-      location_id: locations.id,
-    })
-    .from(reports)
-    .leftJoin(locations, eq(reports.location_id, locations.id))
-    .orderBy(desc(reports.created_at));
-  return allReports;
+  try {
+    const allReports = await db
+      .select({
+        id: reports.id,
+        description: reports.description,
+        status: reports.status,
+        created_at: reports.created_at,
+        location_name: locations.name,
+        location_id: locations.id,
+      })
+      .from(reports)
+      .leftJoin(locations, eq(reports.location_id, locations.id))
+      .orderBy(desc(reports.created_at));
+    return allReports;
+  } catch (error) {
+    console.error("Failed to get reports:", error);
+    return [];
+  }
 }
 
 export async function updateReportStatus(reportId: string, status: string, handlerId: string) {
@@ -43,7 +48,12 @@ export async function updateReportStatus(reportId: string, status: string, handl
 }
 
 export async function getLocations() {
-  return db.select().from(locations);
+  try {
+    return await db.select().from(locations);
+  } catch (error) {
+    console.error("Failed to get locations:", error);
+    return [];
+  }
 }
 
 export async function createLocation(name: string) {

@@ -10,12 +10,17 @@ import { Button } from "@/components/ui/button";
 import RealTimeNotifications from "@/components/real-time-notifications";
 
 export default async function DashboardPage() {
-  const [session, reports] = await Promise.all([
-    auth.api.getSession({
+  let session = null;
+  let reports = [];
+
+  try {
+    session = await auth.api.getSession({
       headers: await headers(),
-    }),
-    getReports()
-  ]);
+    });
+    reports = await getReports();
+  } catch (error) {
+    console.error("Session or DB error:", error);
+  }
 
   if (!session) {
     redirect("/login");

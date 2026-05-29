@@ -11,29 +11,40 @@ import StatusUpdater from "./status-updater";
 
 export default async function ReportDetailPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  let session = null;
+  try {
+    session = await auth.api.getSession({
+      headers: await headers(),
+    });
+  } catch (error) {
+    console.error("Session error:", error);
+  }
 
   if (!session) {
     redirect("/login");
   }
 
   const reportId = params.id;
+  let report = null;
 
-  const [report] = await db
-    .select({
-      id: reports.id,
-      description: reports.description,
-      status: reports.status,
-      created_at: reports.created_at,
-      location_name: locations.name,
-      handled_by_name: user.name,
-    })
-    .from(reports)
-    .leftJoin(locations, eq(reports.location_id, locations.id))
-    .leftJoin(user, eq(reports.handled_by, user.id))
-    .where(eq(reports.id, reportId));
+  try {
+    const [fetched] = await db
+      .select({
+        id: reports.id,
+        description: reports.description,
+        status: reports.status,
+        created_at: reports.created_at,
+        location_name: locations.name,
+        handled_by_name: user.name,
+      })
+      .from(reports)
+      .leftJoin(locations, eq(reports.location_id, locations.id))
+      .leftJoin(user, eq(reports.handled_by, user.id))
+      .where(eq(reports.id, reportId));
+    report = fetched;
+  } catch (error) {
+    console.error("DB error:", error);
+  }
 
   if (!report) {
     notFound();
