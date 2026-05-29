@@ -162,7 +162,7 @@ export default function LocationManager({ initialLocations }: { initialLocations
                               <Button variant="secondary" className="flex-1 gap-2" onClick={() => window.open(qrUrl, '_blank')}>
                                 <ExternalLink className="h-4 w-4" /> Visit URL
                               </Button>
-                              <Button variant="primary" className="flex-1 gap-2" onClick={() => handlePrint(loc.name)}>
+                              <Button variant="default" className="flex-1 gap-2" onClick={() => handlePrint(loc.name)}>
                                 <Printer className="h-4 w-4" /> Print QR
                               </Button>
                             </div>
