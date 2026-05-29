@@ -25,9 +25,31 @@ export default function RealTimeNotifications({ latestReportId }: { latestReport
         duration: 10000,
       });
 
-      // Play audio
-      const audio = new Audio("/alarm.mp3");
-      audio.play().catch(e => console.error("Audio play failed:", e));
+      // Mainkan suara alarm yang keras menggunakan Web Audio API tanpa perlu file mp3
+      try {
+        const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+        const ctx = new AudioContext();
+        
+        // Buat 3 bunyi bip berturut-turut
+        for (let i = 0; i < 3; i++) {
+          const osc = ctx.createOscillator();
+          const gainNode = ctx.createGain();
+          
+          osc.type = "square"; // Suara lebih tajam cocok untuk alarm
+          osc.frequency.setValueAtTime(800, ctx.currentTime + i * 0.3);
+          
+          gainNode.gain.setValueAtTime(0.2, ctx.currentTime + i * 0.3);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.3 + 0.2);
+          
+          osc.connect(gainNode);
+          gainNode.connect(ctx.destination);
+          
+          osc.start(ctx.currentTime + i * 0.3);
+          osc.stop(ctx.currentTime + i * 0.3 + 0.2);
+        }
+      } catch (e) {
+        console.error("Gagal memutar audio:", e);
+      }
     }
     prevReportId.current = latestReportId;
   }, [latestReportId]);
