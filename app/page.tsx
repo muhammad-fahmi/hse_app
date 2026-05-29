@@ -11,7 +11,7 @@ import RealTimeNotifications from "@/components/real-time-notifications";
 
 export default async function DashboardPage() {
   let session = null;
-  let reports = [];
+  let reports: any[] = [];
 
   try {
     session = await auth.api.getSession({
