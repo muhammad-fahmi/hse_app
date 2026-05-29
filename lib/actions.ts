@@ -5,8 +5,6 @@ import { locations, reports } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-import { eventEmitter } from "./events";
-
 export async function createReport(data: { location_id: string; description: string }) {
   const newId = crypto.randomUUID();
   await db.insert(reports).values({
@@ -15,12 +13,6 @@ export async function createReport(data: { location_id: string; description: str
     description: data.description,
     status: "BARU",
     created_at: new Date(),
-  });
-  
-  eventEmitter.emit("new_report", {
-    id: newId,
-    location_id: data.location_id,
-    description: data.description,
   });
   
   revalidatePath("/admin");

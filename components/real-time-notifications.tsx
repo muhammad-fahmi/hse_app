@@ -1,44 +1,19 @@
 "use client";
 
-import { useEffect } from "react";
-import { toast } from "sonner";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function RealTimeNotifications() {
   const router = useRouter();
 
   useEffect(() => {
-    const eventSource = new EventSource("/api/sse");
-
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      toast("New Incident Reported!", {
-        description: data.description,
-        action: {
-          label: "Refresh",
-          onClick: () => router.refresh(),
-        },
-        duration: 10000,
-        style: {
-          backgroundColor: "#ffeb3b",
-          color: "#000",
-          border: "1px solid #fbc02d",
-        }
-      });
-      // Optionally auto-refresh
+    // Poll every 5 seconds to get updates, 
+    // replacing SSE to be fully compatible with Vercel Serverless
+    const interval = setInterval(() => {
       router.refresh();
-      // Play a sound
-      try {
-        const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
-        audio.play();
-      } catch (e) {
-        // Ignore auto-play policies
-      }
-    };
+    }, 5000);
 
-    return () => {
-      eventSource.close();
-    };
+    return () => clearInterval(interval);
   }, [router]);
 
   return null;
