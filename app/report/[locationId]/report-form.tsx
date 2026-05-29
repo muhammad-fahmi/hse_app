@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { createReport } from "@/lib/actions";
 import { toast } from "sonner";
-import { CheckCircle2, AlertTriangle } from "lucide-react";
+import { CheckCircle2, AlertTriangle, Send, RefreshCcw, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function ReportForm({ locationId, locationName }: { locationId: string, locationName: string }) {
   const [description, setDescription] = useState("");
@@ -33,46 +34,53 @@ export default function ReportForm({ locationId, locationName }: { locationId: s
 
   if (isSuccess) {
     return (
-      <div className="flex flex-col items-center justify-center space-y-4 py-8">
-        <CheckCircle2 className="h-16 w-16 text-green-500" />
-        <h3 className="text-xl font-bold text-gray-900">Report Sent!</h3>
-        <p className="text-center text-gray-600">
-          Thank you for reporting the issue at {locationName}. The SHE team has been notified.
-        </p>
-        <Button onClick={() => window.location.reload()} variant="outline" className="mt-4">
-          Report Another Issue
+      <div className="flex flex-col items-center justify-center space-y-6 py-10 animate-in zoom-in duration-500">
+        <div className="relative">
+          <div className="absolute inset-0 bg-green-500/20 rounded-full blur-2xl animate-pulse" />
+          <CheckCircle2 className="h-20 w-20 text-green-500 relative" />
+        </div>
+        <div className="text-center space-y-2">
+          <h3 className="text-2xl font-black text-foreground uppercase tracking-tight">Report Received</h3>
+          <p className="text-muted-foreground font-medium max-w-[250px] mx-auto text-sm leading-relaxed">
+            Thank you. The SHE team has been notified about the issue at <span className="text-primary font-bold">{locationName}</span>.
+          </p>
+        </div>
+        <Button 
+          onClick={() => window.location.reload()} 
+          variant="outline" 
+          className="mt-4 rounded-xl gap-2 hover:bg-primary hover:text-primary-foreground transition-all px-8 h-12 font-bold"
+        >
+          <RefreshCcw className="w-4 h-4" /> Report Another Issue
         </Button>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="rounded-md bg-yellow-50 p-4 mb-4">
-        <div className="flex">
-          <div className="flex-shrink-0">
-            <AlertTriangle className="h-5 w-5 text-yellow-400" aria-hidden="true" />
-          </div>
-          <div className="ml-3">
-            <h3 className="text-sm font-medium text-yellow-800">Instructions</h3>
-            <div className="mt-2 text-sm text-yellow-700">
-              <p>Please describe the safety, health, or environmental issue clearly. Include specific details to help the SHE team resolve it quickly.</p>
-            </div>
-          </div>
+    <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="rounded-2xl bg-amber-500/10 p-4 border border-amber-500/20 flex gap-4">
+        <div className="bg-amber-500 p-2 rounded-xl h-fit shadow-lg shadow-amber-500/20">
+          <AlertTriangle className="h-5 w-5 text-white" aria-hidden="true" />
+        </div>
+        <div className="space-y-1">
+          <h3 className="text-sm font-bold text-amber-900 dark:text-amber-200">How to report</h3>
+          <p className="text-xs text-amber-800/70 dark:text-amber-300/70 leading-relaxed">
+            Please be specific. Describe exactly what and where the issue is so we can act fast.
+          </p>
         </div>
       </div>
 
-      <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+      <div className="space-y-3 group">
+        <label htmlFor="description" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 group-focus-within:text-primary transition-colors">
           Issue Description
         </label>
-        <div className="mt-1">
+        <div className="relative">
           <Textarea
             id="description"
             name="description"
-            rows={4}
-            className="w-full"
-            placeholder="E.g. Spilled oil near the main entrance..."
+            rows={5}
+            className="w-full bg-secondary/30 border-none rounded-2xl p-4 focus-visible:ring-primary/30 resize-none text-md placeholder:text-muted-foreground/50 transition-all"
+            placeholder="E.g. I noticed a large oil spill near the entrance of Warehouse B, it looks like a slip hazard..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
@@ -80,8 +88,25 @@ export default function ReportForm({ locationId, locationName }: { locationId: s
         </div>
       </div>
 
-      <Button type="submit" className="w-full h-12 text-lg font-semibold" disabled={isSubmitting}>
-        {isSubmitting ? "Sending..." : "Submit Report"}
+      <Button 
+        type="submit" 
+        className={cn(
+          "w-full h-14 text-lg font-black uppercase tracking-tighter rounded-2xl shadow-xl transition-all active:scale-[0.98]",
+          isSubmitting ? "bg-muted cursor-not-allowed" : "bg-primary hover:shadow-primary/30 shadow-primary/20"
+        )} 
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          <div className="flex items-center gap-2">
+            <Loader2 className="w-5 h-5 animate-spin" />
+            Sending Report...
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            Submit Incident
+            <Send className="w-5 h-5" />
+          </div>
+        )}
       </Button>
     </form>
   );
