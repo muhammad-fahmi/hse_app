@@ -9,6 +9,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import RealTimeNotifications from "@/components/real-time-notifications";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function DashboardPage() {
   let session = null;
   let reports: any[] = [];
